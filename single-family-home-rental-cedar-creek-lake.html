@@ -16,6 +16,18 @@
 .listing-card h3.leased{text-decoration:line-through;opacity:.7;}
 .leased-note{margin:6px 0 0;font-weight:800;color:#c0392b;font-size:.9rem;}
 .soon-note{margin:6px 0 0;font-weight:800;color:#1a7f4b;font-size:.9rem;}
+button.btn{border:none;cursor:pointer;font-family:inherit;}
+.wl-overlay{display:none;position:fixed;inset:0;background:rgba(20,28,24,.55);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+.wl-overlay.open{display:flex;}
+.wl-box{background:#fff;border-radius:12px;max-width:440px;width:100%;padding:26px 24px;box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative;max-height:90vh;overflow:auto;}
+.wl-box h3{margin:0 0 4px;font-size:1.3rem;color:#1a3d2b;}
+.wl-sub{margin:0 0 14px;color:#666;font-size:.9rem;}
+.wl-box label{display:block;font-weight:700;font-size:.85rem;color:#333;margin:12px 0 4px;}
+.wl-box input{width:100%;padding:10px 12px;border:1px solid #ccd5cf;border-radius:7px;font-size:1rem;box-sizing:border-box;}
+.wl-box input:focus{outline:none;border-color:#2f5d45;}
+.wl-close{position:absolute;top:10px;right:14px;background:none;border:none;font-size:1.7rem;line-height:1;color:#888;cursor:pointer;}
+.wl-send{margin-top:18px;width:100%;cursor:pointer;border:none;background:#1a7f4b;color:#fff;font-weight:800;padding:13px;border-radius:8px;font-size:1rem;}
+.wl-error{color:#c0392b;font-weight:700;font-size:.85rem;margin:10px 0 0;}
 </style>
 </head>
 <body>
@@ -40,7 +52,7 @@
 
 <section><div class="container"><div class="listings-grid">
 
-<article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-soon">Coming Soon</span></div><div class="body"><h3>102 Remington</h3><p class="meta"><span>📍 Mabank, TX</span></p><p class="meta"><span>🛏️ 4 bed</span><span>🛁 2 bath</span><span>📐 1,450 sqft</span></p><p class="price">$1,900/mo</p><p class="soon-note">Available ~1 month — no application fee to join the waitlist</p><a href="mailto:manager@echmanagement.services?subject=Waitlist%20Inquiry%20-%20102%20Remington%2C%20Mabank&body=I%20would%20like%20to%20join%20the%20waitlist%20for%20102%20Remington%20(Mabank).%0A%0AName%3A%0APhone%3A%0ADesired%20move-in%20date%3A" class="btn">Join the Waitlist</a></div></article>
+<article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-soon">Coming Soon</span></div><div class="body"><h3>102 Remington</h3><p class="meta"><span>📍 Mabank, TX</span></p><p class="meta"><span>🛏️ 4 bed</span><span>🛁 2 bath</span><span>📐 1,450 sqft</span></p><p class="price">$1,900/mo</p><p class="soon-note">Available ~1 month — no application fee to join the waitlist</p><button type="button" class="btn" onclick="openWaitlist('102 Remington, Mabank')">Join the Waitlist</button></div></article>
 
 <article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-rented">Rented</span></div><div class="body"><h3 class="leased">500 Reynolds Rd</h3><p class="meta"><span>📍 Athens, TX</span></p><p class="meta"><span>🛏️ 2 bed</span><span>🛁 1 bath</span><span>📐 1,184 sqft</span></p><p class="price" style="opacity:.65;">$1,500/mo</p><p class="leased-note">Currently leased</p></div></article>
 
@@ -52,7 +64,7 @@
 
 <article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-rented">Rented</span></div><div class="body"><h3 class="leased">124 Pierce Dr</h3><p class="meta"><span>📍 Mabank, TX</span></p><p class="meta"><span>🛏️ 2 bed</span><span>🛁 1 bath</span><span>📐 1,086 sqft</span></p><p class="price" style="opacity:.65;">$1,400/mo</p><p class="leased-note">Currently leased</p></div></article>
 
-<article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-rented">Rented</span></div><div class="body"><h3 class="leased">103 Marybeth Ln</h3><p class="meta"><span>📍 Athens, TX</span></p><p class="meta"><span>🛏️ 2 bed</span><span>🛁 2 bath</span><span>📐 1,464 sqft</span></p><p class="price" style="opacity:.65;">$1,900/mo</p><p class="leased-note">Currently leased</p></div></article>
+<article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-rented">Rented</span></div><div class="body"><h3 class="leased">103 Marybeth Ln</h3><p class="meta"><span>📍 Athens, TX</span></p><p class="meta"><span>🛏️ 2 bed</span><span>🛁 2 bath</span><span>📐 1,464 sqft</span></p><p class="price" style="opacity:.65;">$1,900/mo</p><p class="leased-note">Currently leased</p></div></article>
 
 <article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-rented">Rented</span></div><div class="body"><h3 class="leased">103 Marybeth Ln — Efficiency Unit</h3><p class="meta"><span>📍 Athens, TX</span></p><p class="meta"><span>🛏️ 1 bed</span><span>🛁 1 bath</span><span>📐 400 sqft</span></p><p class="price" style="opacity:.65;">$1,100/mo</p><p class="leased-note">Currently leased</p></div></article>
 
@@ -66,7 +78,7 @@
 <h2>Most of Our Homes Are Currently Leased</h2>
 <p>New homes come available regularly. Join our waitlist — no application fee — and we'll be in touch the moment one opens up.</p>
 <p><a href="mailto:manager@echmanagement.services" style="color:#fff; text-decoration:underline;">manager@echmanagement.services</a> · <a href="tel:430-207-8466" style="color:#fff; text-decoration:underline;">430-207-8466</a></p>
-<a href="mailto:manager@echmanagement.services?subject=Rental%20Waitlist%20-%20Single%20Family%20Homes&body=I%20would%20like%20to%20join%20the%20waitlist%20for%20a%20single%20family%20home.%0A%0AName%3A%0APhone%3A%0APreferred%20area%2Fsize%3A%0ADesired%20move-in%20date%3A" class="btn btn-lavender">Join the Waitlist</a>
+<button type="button" class="btn btn-lavender" onclick="openWaitlist('')">Join the Waitlist</button>
 </div></section>
 
 <footer><div class="container">
@@ -77,4 +89,25 @@
 </div>
 <div class="copyright">© 2026 ECH Property Management LLC · All Rights Reserved · Powered by TARS</div>
 </div></footer>
+
+<div id="wl-modal" class="wl-overlay" role="dialog" aria-modal="true" aria-labelledby="wl-title">
+<div class="wl-box">
+<button class="wl-close" type="button" onclick="closeWaitlist()" aria-label="Close">&times;</button>
+<h3 id="wl-title">Join the Waitlist</h3>
+<p class="wl-sub">No application fee. Tell us how to reach you and we'll be in touch when something opens.</p>
+<label for="wl-name">Full Name</label><input id="wl-name" type="text" autocomplete="name">
+<label for="wl-phone">Phone Number</label><input id="wl-phone" type="tel" autocomplete="tel">
+<label for="wl-email">Email</label><input id="wl-email" type="email" autocomplete="email">
+<label for="wl-rent">What are you looking to rent?</label><input id="wl-rent" type="text" placeholder="e.g. 3 bed home in Mabank">
+<p id="wl-error" class="wl-error" style="display:none;"></p>
+<button class="wl-send" type="button" onclick="sendWaitlist()">Send</button>
+</div>
+</div>
+<script>
+function openWaitlist(prop){var r=document.getElementById('wl-rent');r.value=prop||'';document.getElementById('wl-error').style.display='none';document.getElementById('wl-modal').classList.add('open');document.getElementById('wl-name').focus();}
+function closeWaitlist(){document.getElementById('wl-modal').classList.remove('open');}
+function sendWaitlist(){var n=document.getElementById('wl-name').value.trim(),p=document.getElementById('wl-phone').value.trim(),e=document.getElementById('wl-email').value.trim(),r=document.getElementById('wl-rent').value.trim(),err=document.getElementById('wl-error');if(!n||!p||!e){err.textContent='Please enter your name, phone, and email.';err.style.display='block';return;}var subject='Rental Waitlist'+(r?(' - '+r):'');var body='Name: '+n+'\nPhone: '+p+'\nEmail: '+e+'\nLooking to rent: '+r+'\n';window.location.href='mailto:manager@echmanagement.services?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);}
+document.getElementById('wl-modal').addEventListener('click',function(ev){if(ev.target===this)closeWaitlist();});
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeWaitlist();});
+</script>
 </body></html>
