@@ -36,7 +36,6 @@ button.btn{border:none;cursor:pointer;font-family:inherit;}
 .wl-box input:focus{outline:none;border-color:#2f5d45;}
 .wl-close{position:absolute;top:10px;right:14px;background:none;border:none;font-size:1.7rem;line-height:1;color:#888;cursor:pointer;}
 .wl-send{margin-top:18px;width:100%;cursor:pointer;border:none;background:#1a7f4b;color:#fff;font-weight:800;padding:13px;border-radius:8px;font-size:1rem;}
-.wl-error{color:#c0392b;font-weight:700;font-size:.85rem;margin:10px 0 0;}
 </style>
 </head>
 <body>
@@ -104,22 +103,25 @@ button.btn{border:none;cursor:pointer;font-family:inherit;}
 </div></footer>
 
 <div id="wl-modal" class="wl-overlay" role="dialog" aria-modal="true" aria-labelledby="wl-title">
-<div class="wl-box">
+<form class="wl-box" action="https://formsubmit.co/manager@echmanagement.services" method="POST">
 <button class="wl-close" type="button" onclick="closeWaitlist()" aria-label="Close">&times;</button>
 <h3 id="wl-title">Join the Waitlist</h3>
 <p class="wl-sub">No application fee. Tell us how to reach you and we'll be in touch when something opens.</p>
-<label for="wl-name">Full Name</label><input id="wl-name" type="text" autocomplete="name">
-<label for="wl-phone">Phone Number</label><input id="wl-phone" type="tel" autocomplete="tel">
-<label for="wl-email">Email</label><input id="wl-email" type="email" autocomplete="email">
-<label for="wl-rent">What are you looking to rent?</label><input id="wl-rent" type="text" placeholder="e.g. 2 bed apartment in Mabank">
-<p id="wl-error" class="wl-error" style="display:none;"></p>
-<button class="wl-send" type="button" onclick="sendWaitlist()">Send</button>
-</div>
+<input type="hidden" name="_subject" value="New Rental Waitlist Submission - echmanagement.services">
+<input type="hidden" name="_template" value="table">
+<input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_next" value="https://echmanagement.services/thank-you.html">
+<input type="text" name="_honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true">
+<label for="wl-name">Full Name</label><input id="wl-name" name="Name" type="text" required autocomplete="name">
+<label for="wl-phone">Phone Number</label><input id="wl-phone" name="Phone" type="tel" required autocomplete="tel">
+<label for="wl-email">Email</label><input id="wl-email" name="Email" type="email" required autocomplete="email">
+<label for="wl-rent">What are you looking to rent?</label><input id="wl-rent" name="Looking to rent" type="text" placeholder="e.g. 2 bed apartment in Mabank">
+<button class="wl-send" type="submit">Send</button>
+</form>
 </div>
 <script>
-function openWaitlist(prop){var r=document.getElementById('wl-rent');r.value=prop||'';document.getElementById('wl-error').style.display='none';document.getElementById('wl-modal').classList.add('open');document.getElementById('wl-name').focus();}
+function openWaitlist(prop){document.getElementById('wl-rent').value=prop||'';document.getElementById('wl-modal').classList.add('open');document.getElementById('wl-name').focus();}
 function closeWaitlist(){document.getElementById('wl-modal').classList.remove('open');}
-function sendWaitlist(){var n=document.getElementById('wl-name').value.trim(),p=document.getElementById('wl-phone').value.trim(),e=document.getElementById('wl-email').value.trim(),r=document.getElementById('wl-rent').value.trim(),err=document.getElementById('wl-error');if(!n||!p||!e){err.textContent='Please enter your name, phone, and email.';err.style.display='block';return;}var subject='Rental Waitlist'+(r?(' - '+r):'');var body='Name: '+n+'\nPhone: '+p+'\nEmail: '+e+'\nLooking to rent: '+r+'\n';window.location.href='mailto:manager@echmanagement.services?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);}
 document.getElementById('wl-modal').addEventListener('click',function(ev){if(ev.target===this)closeWaitlist();});
 document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeWaitlist();});
 </script>
