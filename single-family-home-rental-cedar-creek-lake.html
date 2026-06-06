@@ -4,18 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Single Family Home Rentals | ECH Property Management</title>
-<meta name="description" content="Single family rental homes in Mabank, Athens, Malakoff TX, managed by ECH Property Management. Most homes currently leased — join the waitlist for upcoming availability.">
+<meta name="description" content="Single family rental homes in Mabank, Athens, Malakoff TX, managed by ECH Property Management. Homes available now — apply today or join the waitlist.">
 <link rel="canonical" href="https://echmanagement.services/single-family-home-rental-cedar-creek-lake.html">
 <link rel="stylesheet" href="styles.css">
 <style>
 .status-badge{position:absolute;top:12px;left:12px;color:#fff;font-weight:800;font-size:.72rem;letter-spacing:.06em;padding:5px 11px;border-radius:4px;text-transform:uppercase;z-index:2;}
 .status-rented{background:#c0392b;}
 .status-soon{background:#1a7f4b;}
+.status-avail{background:#1a7f4b;}
 .photo-ph{position:relative;width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#eef2f4,#dde6ea);display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .house-svg{width:58%;max-width:175px;height:auto;}
 .listing-card h3.leased{text-decoration:line-through;opacity:.7;}
 .leased-note{margin:6px 0 0;font-weight:800;color:#c0392b;font-size:.9rem;}
 .soon-note{margin:6px 0 0;font-weight:800;color:#1a7f4b;font-size:.9rem;}
+.avail-note{margin:6px 0 0;font-weight:800;color:#1a7f4b;font-size:.9rem;}
 button.btn{border:none;cursor:pointer;font-family:inherit;}
 .wl-overlay{display:none;position:fixed;inset:0;background:rgba(20,28,24,.55);z-index:1000;align-items:center;justify-content:center;padding:20px;}
 .wl-overlay.open{display:flex;}
@@ -46,10 +48,12 @@ button.btn{border:none;cursor:pointer;font-family:inherit;}
 <header class="page-header"><div class="container">
 <p class="pre-title">East Texas</p>
 <h1>Single Family Home Rentals</h1>
-<p>Quality rental homes throughout Athens, Malakoff, Mabank and surrounding East Texas communities. Most of our homes are currently leased — join the waitlist and we'll reach out the moment one opens.</p>
+<p>Quality rental homes throughout Athens, Malakoff, Mabank and surrounding East Texas communities. Apply today for an available home, or join the waitlist and we'll reach out the moment one opens.</p>
 </div></header>
 
 <section><div class="container"><div class="listings-grid">
+
+<article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-avail">Available</span></div><div class="body"><h3>124 Pierce Dr</h3><p class="meta"><span>📍 Mabank, TX</span></p><p class="meta"><span>🛏️ 2 bed</span><span>🛁 1 bath</span><span>📐 1,086 sqft</span></p><p class="price">$1,400/mo</p><p class="avail-note">Available now — apply today</p><a href="https://app.rentredi.com/apply" class="btn">Apply Now</a></div></article>
 
 <article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-soon">Coming Soon</span></div><div class="body"><h3>102 Remington</h3><p class="meta"><span>📍 Mabank, TX</span></p><p class="meta"><span>🛏️ 4 bed</span><span>🛁 2 bath</span><span>📐 1,450 sqft</span></p><p class="price">$1,900/mo</p><p class="soon-note">Available ~1 month — no application fee to join the waitlist</p><button type="button" class="btn" onclick="openWaitlist('102 Remington, Mabank')">Join the Waitlist</button></div></article>
 
@@ -60,8 +64,6 @@ button.btn{border:none;cursor:pointer;font-family:inherit;}
 <article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-rented">Rented</span></div><div class="body"><h3 class="leased">1301 E. Royall Blvd</h3><p class="meta"><span>📍 Malakoff, TX</span></p><p class="meta"><span>🛏️ 3 bed</span><span>🛁 2 bath</span><span>📐 1,406 sqft</span></p><p class="price" style="opacity:.65;">$1,500/mo</p><p class="leased-note">Currently leased</p></div></article>
 
 <article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-rented">Rented</span></div><div class="body"><h3 class="leased">415 E. Skiles</h3><p class="meta"><span>📍 Malakoff, TX</span></p><p class="meta"><span>🛏️ 3 bed</span><span>🛁 1.5 bath</span><span>📐 1,450 sqft</span></p><p class="price" style="opacity:.65;">$1,500/mo</p><p class="leased-note">Currently leased</p></div></article>
-
-<article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-rented">Rented</span></div><div class="body"><h3 class="leased">124 Pierce Dr</h3><p class="meta"><span>📍 Mabank, TX</span></p><p class="meta"><span>🛏️ 2 bed</span><span>🛁 1 bath</span><span>📐 1,086 sqft</span></p><p class="price" style="opacity:.65;">$1,400/mo</p><p class="leased-note">Currently leased</p></div></article>
 
 <article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-rented">Rented</span></div><div class="body"><h3 class="leased">103 Marybeth Ln</h3><p class="meta"><span>📍 Athens, TX</span></p><p class="meta"><span>🛏️ 2 bed</span><span>🛁 2 bath</span><span>📐 1,464 sqft</span></p><p class="price" style="opacity:.65;">$1,900/mo</p><p class="leased-note">Currently leased</p></div></article>
 
@@ -74,8 +76,8 @@ button.btn{border:none;cursor:pointer;font-family:inherit;}
 </div></div></section>
 
 <section class="cta-banner"><div class="container">
-<h2>Most of Our Homes Are Currently Leased</h2>
-<p>New homes come available regularly. Join our waitlist — no application fee — and we'll be in touch the moment one opens up.</p>
+<h2>Looking for a Home?</h2>
+<p>We have homes available now — apply today. Don't see the right fit? Join our waitlist (no application fee) and we'll be in touch the moment one opens up.</p>
 <p><a href="mailto:manager@echmanagement.services" style="color:#fff; text-decoration:underline;">manager@echmanagement.services</a> · <a href="tel:430-207-8466" style="color:#fff; text-decoration:underline;">430-207-8466</a></p>
 <button type="button" class="btn btn-lavender" onclick="openWaitlist('')">Join the Waitlist</button>
 </div></section>
