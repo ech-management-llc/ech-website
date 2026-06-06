@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtual Tour Demo | ECH Property Management</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.css">
+<style>
+.tour-banner{background:#1a3d2b;color:#fff;text-align:center;padding:10px 16px;font-size:.9rem;}
+.tour-banner strong{color:#7ee0a8;}
+.tour-wrap{position:relative;width:100%;height:70vh;min-height:420px;background:#000;}
+#panorama{width:100%;height:100%;}
+.tour-controls{position:absolute;left:0;right:0;bottom:18px;display:flex;justify-content:center;align-items:center;gap:14px;z-index:50;pointer-events:none;}
+.tour-controls > *{pointer-events:auto;}
+.room-nav{background:rgba(20,40,30,.82);color:#fff;border:none;width:54px;height:54px;border-radius:50%;font-size:1.5rem;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.4);}
+.room-nav:hover{background:#1a7f4b;}
+.room-pill{background:rgba(20,40,30,.82);color:#fff;padding:12px 22px;border-radius:30px;font-weight:800;font-size:1.05rem;box-shadow:0 3px 12px rgba(0,0,0,.4);min-width:150px;text-align:center;}
+.tour-hint{text-align:center;color:#557;font-size:.9rem;padding:14px;}
+.tour-arrow{height:50px;width:50px;background:#1a7f4b;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 12px rgba(0,0,0,.45);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.tour-arrow:after{content:'\2197';color:#fff;font-size:26px;font-weight:bold;line-height:1;}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="container nav-inner">
+<a href="/" class="logo"><strong>ECH</strong> <span class="light">Property Management</span></a>
+<ul class="nav-links">
+<li><a href="/">Home</a></li>
+<li class="dropdown"><a href="#">Our Rentals ▾</a><div class="submenu"><a href="/single-family-home-rental-cedar-creek-lake.html">Single Family Homes</a><a href="/apartment-rental-cedar-creek-lake.html">Apartments</a></div></li>
+<li><a href="/property-management.html">Property Owners</a></li>
+<li><a href="/about-ech-property-management.html">About ECH</a></li>
+<li><a href="/contact.html">Contact</a></li>
+<li><a href="https://app.rentredi.com/pay" class="btn btn-secondary">Pay Online</a></li>
+<li><a href="https://app.rentredi.com/apply" class="btn">Apply Now</a></li>
+</ul>
+</div></nav>
+
+<div class="tour-banner">🏠 <strong>DEMO</strong> — these are sample rooms to show the experience. Your real property panoramas will replace them. <strong>Drag</strong> to look around · click the <strong>green arrow</strong> or the <strong>◀ ▶ buttons</strong> to walk to the next room.</div>
+
+<div class="tour-wrap">
+<div id="panorama"></div>
+<div class="tour-controls">
+<button class="room-nav" onclick="go(-1)" aria-label="Previous room">&#9664;</button>
+<div class="room-pill" id="room-name">Living Room</div>
+<button class="room-nav" onclick="go(1)" aria-label="Next room">&#9654;</button>
+</div>
+</div>
+<p class="tour-hint">Tip: on a phone, drag with your finger to look around. Pinch to zoom.</p>
+
+<section><div class="container" style="text-align:center;padding:10px 0 50px;">
+<h2>This Is the Experience We'd Build for Your Properties</h2>
+<p style="max-width:640px;margin:0 auto 22px;">Shoot a 360° walk-through of a home, and we turn it into a tour exactly like this — renters explore every room from their couch before they ever call. Replaces the sample rooms above with the real thing.</p>
+<a href="/single-family-home-rental-cedar-creek-lake.html" class="btn">Back to Rentals</a>
+</div></section>
+
+<footer><div class="container">
+<div class="footer-grid">
+<div><a href="/" class="logo"><strong>ECH</strong> <span class="light">Property Management</span></a><p>Professional property management serving East Texas.</p></div>
+<div><h4>Quick Links</h4><ul><li><a href="/">Home</a></li><li><a href="/single-family-home-rental-cedar-creek-lake.html">Single Family Homes</a></li><li><a href="/apartment-rental-cedar-creek-lake.html">Apartments</a></li><li><a href="/property-management.html">Property Owners</a></li><li><a href="/about-ech-property-management.html">About</a></li><li><a href="/contact.html">Contact</a></li></ul></div>
+<div class="footer-contact"><h4>Contact Us</h4><p><strong>Phone:</strong> <a href="tel:430-207-8466">430-207-8466</a></p><p><strong>Email:</strong> <a href="mailto:manager@echmanagement.services">manager@echmanagement.services</a></p><p><strong>Address:</strong><br>13074 State Hwy 198<br>Mabank, Texas</p></div>
+</div>
+<div class="copyright">© 2026 ECH Property Management LLC · All Rights Reserved · Powered by TARS</div>
+</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.js"></script>
+<script>
+function makePano(label, hue, frontText){
+  var c=document.createElement('canvas');c.width=2048;c.height=1024;var x=c.getContext('2d');
+  var g=x.createLinearGradient(0,0,0,1024);
+  g.addColorStop(0,'hsl('+hue+',24%,84%)');g.addColorStop(.5,'hsl('+hue+',30%,66%)');g.addColorStop(1,'hsl('+hue+',22%,40%)');
+  x.fillStyle=g;x.fillRect(0,0,2048,1024);
+  x.strokeStyle='rgba(255,255,255,.16)';x.lineWidth=2;
+  for(var i=0;i<=24;i++){var px=i/24*2048;x.beginPath();x.moveTo(px,0);x.lineTo(px,1024);x.stroke();}
+  for(var j=1;j<4;j++){var py=j/4*1024;x.beginPath();x.moveTo(0,py);x.lineTo(2048,py);x.stroke();}
+  x.strokeStyle='rgba(255,255,255,.45)';x.lineWidth=3;x.beginPath();x.moveTo(0,512);x.lineTo(2048,512);x.stroke();
+  x.textAlign='center';x.fillStyle='rgba(255,255,255,.8)';x.font='bold 42px sans-serif';
+  x.fillText('FRONT',256,498);x.fillText('RIGHT',768,498);x.fillText('BACK',1280,498);x.fillText('LEFT',1792,498);
+  x.fillStyle='#fff';x.font='bold 130px sans-serif';x.fillText(label,1024,460);
+  x.fillStyle='rgba(20,45,32,.55)';x.fillRect(944,560,160,300);
+  x.fillStyle='#fff';x.font='bold 30px sans-serif';x.fillText(frontText,1024,720);
+  return c.toDataURL('image/jpeg',.82);
+}
+var order=['living','kitchen','bedroom'];
+var labels={living:'Living Room',kitchen:'Kitchen',bedroom:'Bedroom'};
+var viewer=pannellum.viewer('panorama',{
+  default:{firstScene:'living',autoLoad:true,sceneFadeDuration:700,hfov:110,showControls:true},
+  scenes:{
+    living:{type:'equirectangular',panorama:makePano('Living Room',25,'doorway → Kitchen'),hotSpots:[{pitch:-6,yaw:0,type:'scene',sceneId:'kitchen',text:'Walk to Kitchen',cssClass:'tour-arrow'}]},
+    kitchen:{type:'equirectangular',panorama:makePano('Kitchen',205,'doorway → Bedroom'),hotSpots:[{pitch:-6,yaw:0,type:'scene',sceneId:'bedroom',text:'Walk to Bedroom',cssClass:'tour-arrow'},{pitch:-6,yaw:180,type:'scene',sceneId:'living',text:'Back to Living Room',cssClass:'tour-arrow'}]},
+    bedroom:{type:'equirectangular',panorama:makePano('Bedroom',140,'doorway → Living Room'),hotSpots:[{pitch:-6,yaw:0,type:'scene',sceneId:'living',text:'Walk to Living Room',cssClass:'tour-arrow'},{pitch:-6,yaw:180,type:'scene',sceneId:'kitchen',text:'Back to Kitchen',cssClass:'tour-arrow'}]}
+  }
+});
+function go(dir){var cur=viewer.getScene();var i=order.indexOf(cur);i=(i+dir+order.length)%order.length;viewer.loadScene(order[i]);}
+viewer.on('scenechange',function(id){var el=document.getElementById('room-name');if(el&&labels[id])el.textContent=labels[id];});
+</script>
+</body></html>
