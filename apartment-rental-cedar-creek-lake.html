@@ -25,6 +25,18 @@
 .tag-le{color:#9a3b30;font-weight:800;}
 .bills{margin:10px 0 0;background:#eaf5ee;border:1px solid #bfe0cc;color:#1a5d3a;font-weight:700;font-size:.82rem;padding:8px 11px;border-radius:6px;line-height:1.35;}
 .bills strong{display:block;font-size:.86rem;margin-bottom:1px;}
+button.btn{border:none;cursor:pointer;font-family:inherit;}
+.wl-overlay{display:none;position:fixed;inset:0;background:rgba(20,28,24,.55);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+.wl-overlay.open{display:flex;}
+.wl-box{background:#fff;border-radius:12px;max-width:440px;width:100%;padding:26px 24px;box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative;max-height:90vh;overflow:auto;}
+.wl-box h3{margin:0 0 4px;font-size:1.3rem;color:#1a3d2b;}
+.wl-sub{margin:0 0 14px;color:#666;font-size:.9rem;}
+.wl-box label{display:block;font-weight:700;font-size:.85rem;color:#333;margin:12px 0 4px;}
+.wl-box input{width:100%;padding:10px 12px;border:1px solid #ccd5cf;border-radius:7px;font-size:1rem;box-sizing:border-box;}
+.wl-box input:focus{outline:none;border-color:#2f5d45;}
+.wl-close{position:absolute;top:10px;right:14px;background:none;border:none;font-size:1.7rem;line-height:1;color:#888;cursor:pointer;}
+.wl-send{margin-top:18px;width:100%;cursor:pointer;border:none;background:#1a7f4b;color:#fff;font-weight:800;padding:13px;border-radius:8px;font-size:1rem;}
+.wl-error{color:#c0392b;font-weight:700;font-size:.85rem;margin:10px 0 0;}
 </style>
 </head>
 <body>
@@ -53,7 +65,7 @@
 
 <article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-avail">Available</span></div><div class="body"><h3>502-508 N. Terry St</h3><p class="meta"><span>📍 Malakoff, TX</span></p><p class="avail-note">1 unit available now — apply today</p><p class="fp-label">Floor plans</p><ul class="fp"><li>2 bd / 1 ba · 950 sqft · <strong>$1,700/mo</strong> <span class="tag-av">· Available</span></li><li class="leased">1 bd / 1 ba · 650 sqft <span class="tag-le">· Leased</span></li></ul><div class="bills"><strong>✓ All Bills Paid</strong>Electricity, water, sewer, trash &amp; internet included.</div><a href="https://app.rentredi.com/apply" class="btn" style="margin-top:10px;">Apply Now</a></div></article>
 
-<article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-rented">Leased</span></div><div class="body"><h3 style="opacity:.8;">203-205 S. 9th St</h3><p class="meta"><span>📍 Mabank, TX</span></p><p class="fp-label">Floor plan</p><ul class="fp"><li class="leased">1 bd / 1 ba · 650 sqft · $1,325/mo <span class="tag-le">· Leased</span></li></ul><div class="bills"><strong>✓ All Bills Paid</strong>Electricity, water, sewer, trash &amp; internet included.</div><p class="leased-note">Fully leased — join the waitlist (no application fee)</p><a href="mailto:manager@echmanagement.services?subject=Waitlist%20Inquiry%20-%20203-205%20S.%209th%20St%2C%20Mabank&body=I%20would%20like%20to%20join%20the%20waitlist%20for%20203-205%20S.%209th%20St%20(Mabank).%0A%0AName%3A%0APhone%3A%0ADesired%20move-in%20date%3A" class="btn" style="margin-top:6px;">Join the Waitlist</a></div></article>
+<article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-rented">Leased</span></div><div class="body"><h3 style="opacity:.8;">203-205 S. 9th St</h3><p class="meta"><span>📍 Mabank, TX</span></p><p class="fp-label">Floor plan</p><ul class="fp"><li class="leased">1 bd / 1 ba · 650 sqft · $1,325/mo <span class="tag-le">· Leased</span></li></ul><div class="bills"><strong>✓ All Bills Paid</strong>Electricity, water, sewer, trash &amp; internet included.</div><p class="leased-note">Fully leased — join the waitlist (no application fee)</p><button type="button" class="btn" style="margin-top:6px;" onclick="openWaitlist('203-205 S. 9th St, Mabank')">Join the Waitlist</button></div></article>
 
 <article class="listing-card"><div class="photo-ph"><svg class="house-svg" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House illustration"><rect x="0" y="150" width="240" height="30" fill="#cdd8cf"/><path d="M120 36 L198 102 L42 102 Z" fill="#2f5d45"/><rect x="62" y="102" width="116" height="54" fill="#fff" stroke="#2f5d45" stroke-width="3"/><rect x="104" y="120" width="26" height="36" fill="#2f5d45"/><rect x="140" y="116" width="24" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="76" y="116" width="22" height="22" fill="#bcd2c4" stroke="#2f5d45" stroke-width="2"/><rect x="158" y="56" width="14" height="30" fill="#3f6f54"/></svg><span class="status-badge status-avail">Available</span></div><div class="body"><h3>412-438 LC Way</h3><p class="meta"><span>📍 Mabank, TX</span></p><p class="avail-note">2 units available now — apply today</p><p class="fp-label">Floor plan</p><ul class="fp"><li>1 bd / 1 ba · 650 sqft · <strong>$1,325/mo</strong> <span class="tag-av">· 2 available</span></li></ul><div class="bills"><strong>✓ All Bills Paid</strong>Electricity, water, sewer, trash &amp; internet included.</div><a href="https://app.rentredi.com/apply" class="btn" style="margin-top:10px;">Apply Now</a></div></article>
 
@@ -90,4 +102,25 @@
 </div>
 <div class="copyright">© 2026 ECH Property Management LLC · All Rights Reserved · Powered by TARS</div>
 </div></footer>
+
+<div id="wl-modal" class="wl-overlay" role="dialog" aria-modal="true" aria-labelledby="wl-title">
+<div class="wl-box">
+<button class="wl-close" type="button" onclick="closeWaitlist()" aria-label="Close">&times;</button>
+<h3 id="wl-title">Join the Waitlist</h3>
+<p class="wl-sub">No application fee. Tell us how to reach you and we'll be in touch when something opens.</p>
+<label for="wl-name">Full Name</label><input id="wl-name" type="text" autocomplete="name">
+<label for="wl-phone">Phone Number</label><input id="wl-phone" type="tel" autocomplete="tel">
+<label for="wl-email">Email</label><input id="wl-email" type="email" autocomplete="email">
+<label for="wl-rent">What are you looking to rent?</label><input id="wl-rent" type="text" placeholder="e.g. 2 bed apartment in Mabank">
+<p id="wl-error" class="wl-error" style="display:none;"></p>
+<button class="wl-send" type="button" onclick="sendWaitlist()">Send</button>
+</div>
+</div>
+<script>
+function openWaitlist(prop){var r=document.getElementById('wl-rent');r.value=prop||'';document.getElementById('wl-error').style.display='none';document.getElementById('wl-modal').classList.add('open');document.getElementById('wl-name').focus();}
+function closeWaitlist(){document.getElementById('wl-modal').classList.remove('open');}
+function sendWaitlist(){var n=document.getElementById('wl-name').value.trim(),p=document.getElementById('wl-phone').value.trim(),e=document.getElementById('wl-email').value.trim(),r=document.getElementById('wl-rent').value.trim(),err=document.getElementById('wl-error');if(!n||!p||!e){err.textContent='Please enter your name, phone, and email.';err.style.display='block';return;}var subject='Rental Waitlist'+(r?(' - '+r):'');var body='Name: '+n+'\nPhone: '+p+'\nEmail: '+e+'\nLooking to rent: '+r+'\n';window.location.href='mailto:manager@echmanagement.services?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);}
+document.getElementById('wl-modal').addEventListener('click',function(ev){if(ev.target===this)closeWaitlist();});
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeWaitlist();});
+</script>
 </body></html>
