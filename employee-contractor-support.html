@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee &amp; Contractor Support — ECH Property Management</title>
+<meta name="description" content="Employee and contractor support for ECH Property Management. Log in to Foundation Layer and opt in to operational text updates for East Texas properties.">
+<meta property="og:title" content="Employee &amp; Contractor Support — ECH Property Management">
+<meta property="og:description" content="Log in to Foundation Layer and opt in to operational text updates — for the ECH team and contractors.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://echmanagement.services/employee-contractor-support.html">
+<link rel="canonical" href="https://echmanagement.services/employee-contractor-support.html">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* page-scoped styles for the access / consent form */
+.signup-form{max-width:640px;margin:1.5rem auto 0;text-align:left}
+.signup-form label{display:block;font-weight:600;margin:1rem 0 .35rem}
+.signup-form input[type=text],.signup-form input[type=tel]{width:100%;padding:.7rem .8rem;border:1px solid #cbd5e1;border-radius:8px;font-size:1rem}
+.signup-form .roles{display:flex;gap:1.5rem;font-weight:400;margin-top:.35rem}
+.signup-form .roles label{display:inline-flex;align-items:center;gap:.4rem;font-weight:400;margin:0}
+.consent-box{display:flex;gap:.6rem;align-items:flex-start;margin:1.25rem 0;padding:1rem;background:#f5f4fb;border:1px solid #e2e0f2;border-radius:10px}
+.consent-box input{margin-top:.25rem}
+.consent-fine{font-size:.85rem;color:#64748B;margin-top:.75rem;line-height:1.5}
+.consent-fine a{color:#1F2937}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="container nav-inner">
+<a href="/" class="logo"><strong>ECH</strong> <span class="light">Property Management</span></a>
+<ul class="nav-links">
+<li><a href="/">Home</a></li>
+<li class="dropdown"><a href="#">Our Rentals ▾</a><div class="submenu"><a href="/single-family-home-rental-cedar-creek-lake.html">Single Family Homes</a><a href="/apartment-rental-cedar-creek-lake.html">Apartments</a></div></li>
+<li><a href="/property-management.html">Property Owners</a></li>
+<li><a href="/about-ech-property-management.html">About ECH</a></li>
+<li><a href="/contact.html">Contact</a></li>
+<li class="dropdown"><a href="/employee-contractor-support.html">Employee &amp; Contractor Support ▾</a><div class="submenu"><a href="https://tcc.echmanagement.services">Log In</a><a href="/employee-contractor-support.html#signup">Request Access &amp; Text Sign-Up</a></div></li>
+<li><a href="https://app.rentredi.com/pay" class="btn btn-secondary">Pay Online</a></li>
+<li><a href="https://app.rentredi.com/apply" class="btn">Apply Now</a></li>
+</ul>
+</div></nav>
+
+<section class="hero"><div class="container">
+<p class="pre-title">ECH Team &amp; Contractors</p>
+<h1>Employee &amp; Contractor Support</h1>
+<p class="post-title">Log in to Foundation Layer for your schedules, work orders, and property details — and opt in to operational text updates.</p>
+<a href="https://tcc.echmanagement.services" class="btn">Log in to Foundation Layer</a>
+</div></section>
+
+<section class="find-rental"><div class="container">
+<svg class="icon" viewBox="0 0 64 64" fill="none" stroke="#1F2937" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="14" width="44" height="36" rx="3"/><path d="M10 24h44"/><path d="M20 34h16"/><path d="M20 42h10"/></svg>
+<h2>Log in to Foundation Layer</h2>
+<p>Foundation Layer is ECH's secure operations platform. Team members and contractors sign in to see their assignments, update job status, and stay coordinated in the field.</p>
+<div class="btn-row"><a href="https://tcc.echmanagement.services" class="btn">Log In</a><a href="#signup" class="btn btn-secondary">Request Access</a></div>
+</div></section>
+
+<section><div class="container two-col">
+<div class="text"><h2>For our <em>team</em></h2>
+<p>Everything you need to run your day: today's schedule, the work orders assigned to you, property and tenant details, and a direct line to the office.</p>
+<p>Sign in to Foundation Layer to view your assignments, mark work complete, and keep records straight — from any device, on the job.</p>
+<a href="https://tcc.echmanagement.services" class="btn">Team Log In</a></div>
+<img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80" alt="ECH team member reviewing work on a mobile device">
+</div></section>
+
+<section class="available-rentals"><div class="container two-col">
+<img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=900&q=80" alt="Contractor on a job site">
+<div class="text"><h2>For our <em>contractors</em></h2>
+<p>Independent construction and maintenance contractors work off the same page as the office. See assigned jobs and scopes, submit progress and photos, and track status — no more chasing details by phone.</p>
+<p>Contractors keep their own schedules and businesses; Foundation Layer just keeps us coordinated on ECH work.</p>
+<a href="#signup" class="btn btn-secondary">Request Contractor Access</a></div>
+</div></section>
+
+<section id="signup"><div class="container">
+<h2>Request Access &amp; Text Sign-Up</h2>
+<p>ECH employees and contractors: request your Foundation Layer login and, if you'd like, opt in to operational text messages from ECH. Texting is optional.</p>
+
+<!-- NOTE for Code: wire this form's submit to the FL access/registration endpoint (Build 4 allow-list registration) so the mobile number + consent are stored server-side against the principal. Placeholder action below. -->
+<form class="signup-form" action="https://tcc.echmanagement.services/api/request-access" method="POST">
+  <label for="fullname">Full name</label>
+  <input type="text" id="fullname" name="fullname" required>
+
+  <label>I am an:</label>
+  <div class="roles">
+    <label><input type="radio" name="role" value="employee" required> ECH Employee</label>
+    <label><input type="radio" name="role" value="contractor"> Contractor</label>
+  </div>
+
+  <label for="mobile">Mobile phone number</label>
+  <input type="tel" id="mobile" name="mobile" placeholder="(430) 555-0123">
+
+  <div class="consent-box">
+    <input type="checkbox" id="sms_consent" name="sms_consent" value="yes">
+    <label for="sms_consent" style="font-weight:400;margin:0">I agree to receive operational text messages from ECH Property Management (schedules, work orders, reminders, and replies to my requests). Message frequency varies and is sent infrequently. Message and data rates may apply. Reply HELP for help or STOP to opt out at any time. My consent is not a condition of employment or of any contract or engagement.</label>
+  </div>
+
+  <button type="submit" class="btn">Request Access</button>
+
+  <p class="consent-fine"><strong>Message frequency</strong> varies based on your activity. <strong>Message and data rates may apply.</strong> Reply <strong>HELP</strong> for help or <strong>STOP</strong> to opt out at any time. Your mobile number is never shared with third parties. See our <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.</p>
+</form>
+</div></section>
+
+<footer><div class="container">
+<div class="footer-grid">
+<div><a href="/" class="logo"><strong>ECH</strong> <span class="light">Property Management</span></a><p>Professional property management serving Mabank, Athens, Malakoff, and surrounding East Texas communities.</p></div>
+<div><h4>Quick Links</h4><ul><li><a href="/">Home</a></li><li><a href="/single-family-home-rental-cedar-creek-lake.html">Single Family Homes</a></li><li><a href="/apartment-rental-cedar-creek-lake.html">Apartments</a></li><li><a href="/property-management.html">Property Owners</a></li><li><a href="/about-ech-property-management.html">About</a></li><li><a href="/contact.html">Contact</a></li><li><a href="/employee-contractor-support.html">Employee &amp; Contractor Support</a></li></ul></div>
+<div class="footer-contact"><h4>Contact Us</h4><p><strong>Phone:</strong> <a href="tel:430-207-8466">430-207-8466</a></p><p><strong>Email:</strong> <a href="mailto:manager@echmanagement.services">manager@echmanagement.services</a></p><p><strong>Address:</strong><br>13074 State Hwy 198<br>Mabank, Texas</p></div>
+</div>
+<div class="copyright">© 2026 ECH Property Management LLC · All Rights Reserved · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · Powered by TARS</div>
+</div></footer>
+</body></html>
