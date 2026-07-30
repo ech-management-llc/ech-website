@@ -1,0 +1,19 @@
+# Normalize text to LF in the repo regardless of the checkout platform.
+#
+# Why this exists: the repo is edited from a Windows working copy that was rewriting every
+# text file with CRLF endings, so `git status` showed 11 files "modified" with zero real
+# content change. That noise makes it impossible to see a genuine listing diff and would
+# have been pushed as a 569-line phantom changeset. (Found 2026-07-29.)
+* text=auto eol=lf
+
+# Binary — never touch these
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary

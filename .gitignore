@@ -2,3 +2,7 @@
 Thumbs.db
 node_modules/
 .vscode/
+
+# Python bytecode from tools/photo_pipeline.py
+__pycache__/
+*.pyc
