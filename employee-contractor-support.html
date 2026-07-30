@@ -73,8 +73,12 @@
 <h2>Request Access &amp; Text Sign-Up</h2>
 <p>ECH employees and contractors: request your Foundation Layer login and, if you'd like, opt in to operational text messages from ECH. Texting is optional.</p>
 
-<!-- NOTE for Code: wire this form's submit to the FL access/registration endpoint (Build 4 allow-list registration) so the mobile number + consent are stored server-side against the principal. Placeholder action below. -->
-<form class="signup-form" action="https://tcc.echmanagement.services/api/request-access" method="POST">
+<!-- Wired to Foundation Layer (patch 029): POST /api/public/request-access stores the request
+     + the consent record (language version, server receipt time) server-side. Allow-list
+     registration itself remains the owner's authenticated act inside FL. If the API is
+     unreachable (or the endpoint isn't live yet), the JS below falls back to a prefilled
+     email to manager@ so no submission is ever lost. -->
+<form class="signup-form" id="request-access-form" action="https://api.foundationlayerhq.com/api/public/request-access" method="POST">
   <label for="fullname">Full name</label>
   <input type="text" id="fullname" name="fullname" required>
 
@@ -93,9 +97,73 @@
   </div>
 
   <button type="submit" class="btn">Request Access</button>
+  <p id="request-access-status" role="status" aria-live="polite" style="display:none;margin-top:12px;font-weight:600"></p>
 
   <p class="consent-fine"><strong>Message frequency</strong> varies based on your activity. <strong>Message and data rates may apply.</strong> Reply <strong>HELP</strong> for help or <strong>STOP</strong> to opt out at any time. Your mobile number is never shared with third parties. See our <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.</p>
+  <noscript><p class="consent-fine">This form needs JavaScript. Without it, email your name, role, mobile number, and whether you agree to receive texts to <a href="mailto:manager@echmanagement.services">manager@echmanagement.services</a>.</p></noscript>
 </form>
+<script>
+(function () {
+  var form = document.getElementById('request-access-form');
+  var status = document.getElementById('request-access-status');
+  if (!form) return;
+  function show(msg, ok) {
+    status.style.display = 'block';
+    status.style.color = ok ? '#2e7d32' : '#b71c1c';
+    status.textContent = msg;
+  }
+  function mailtoFallback(data) {
+    var body = 'Request access / text sign-up\n\nName: ' + data.fullname +
+      '\nRole: ' + data.role + '\nMobile: ' + (data.mobile || '(not given)') +
+      '\nAgrees to receive operational texts: ' + (data.sms_consent ? 'YES' : 'no');
+    return 'mailto:manager@echmanagement.services?subject=' +
+      encodeURIComponent('Access request — ' + data.fullname) +
+      '&body=' + encodeURIComponent(body);
+  }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var fd = new FormData(form);
+    var data = {
+      fullname: (fd.get('fullname') || '').trim(),
+      role: fd.get('role') || '',
+      mobile: (fd.get('mobile') || '').trim() || null,
+      sms_consent: fd.get('sms_consent') === 'yes'
+    };
+    if (data.sms_consent && !data.mobile) {
+      show('Please enter your mobile number to opt in to texts.', false);
+      return;
+    }
+    var btn = form.querySelector('button[type=submit]');
+    btn.disabled = true;
+    fetch(form.action, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(function (r) {
+      if (r.status === 201) { window.location.href = '/thank-you.html'; return; }
+      if (r.status === 422) {
+        r.json().then(function (j) {
+          show((j && j.detail) || 'Please check the phone number and try again.', false);
+        }).catch(function () { show('Please check the phone number and try again.', false); });
+        btn.disabled = false;
+        return;
+      }
+      if (r.status === 429) {
+        show('Too many requests just now — please try again in an hour.', false);
+        btn.disabled = false;
+        return;
+      }
+      throw new Error('unavailable');           /* 503 not-enabled-yet, 5xx, etc. */
+    }).catch(function () {
+      /* API unreachable or not live yet — no submission is ever lost: hand off to email. */
+      show('Our online form is briefly unavailable. Opening an email to ' +
+        'manager@echmanagement.services with your details — just press Send.', false);
+      window.location.href = mailtoFallback(data);
+      btn.disabled = false;
+    });
+  });
+})();
+</script>
 </div></section>
 
 <footer><div class="container">
