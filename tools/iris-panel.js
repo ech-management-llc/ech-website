@@ -787,4 +787,29 @@ server.listen(PORT, HOST, () => {
   console.log('  Leave this window open while you use the panel.');
   console.log('  Ctrl+C to stop.');
   console.log('');
+
+  /**
+   * Open the browser from HERE, not from the .bat.
+   *
+   * The launcher used to wait a blind 3 seconds and then open Chrome. On a cold disk, or with
+   * antivirus inspecting node.exe, start-up takes longer than that - Chrome hits a dead port and
+   * shows "127.0.0.1 refused to connect". That reads as a broken panel when it is merely a slow
+   * one, and it cost us two rounds of debugging something that was never wrong.
+   *
+   * This callback fires at the exact moment the port is listening. No race left to lose.
+   * Opt out with --no-open (useful when the panel is being driven by a script).
+   */
+  if (!process.argv.includes('--no-open')) {
+    const url = `http://${HOST}:${PORT}`;
+    const opener = process.platform === 'win32' ? ['cmd', ['/c', 'start', '', url]]
+                 : process.platform === 'darwin' ? ['open', [url]]
+                 : ['xdg-open', [url]];
+    try {
+      require('child_process')
+        .spawn(opener[0], opener[1], { detached: true, stdio: 'ignore' })
+        .unref();
+    } catch {
+      // A browser that won't open is a nuisance, not a failure. The URL is printed above.
+    }
+  }
 });

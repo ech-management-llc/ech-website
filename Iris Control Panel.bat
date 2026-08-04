@@ -43,11 +43,25 @@ if not errorlevel 1 (
   exit /b 0
 )
 
-REM Give the server a couple of seconds, then open the browser.
-start "" /min cmd /c "timeout /t 3 >nul & start http://127.0.0.1:7317"
+REM The panel opens your browser itself, from inside the server's start-up callback.
+REM
+REM This used to be a blind 3-second wait here in the .bat. If Node took longer than that -
+REM cold disk, slow machine, antivirus inspecting node.exe - Chrome hit a dead port and showed
+REM "127.0.0.1 refused to connect", which looks like the panel is broken when it is merely
+REM slow. Node knows the exact moment the port is listening; cmd does not. So Node does it.
+
+echo   Panel starting. LEAVE THIS WINDOW OPEN.
+echo   Closing this window stops the panel.
+echo.
 
 node tools\iris-panel.js
 
 echo.
-echo   Panel stopped.
+echo   ==========================================================
+echo    Panel stopped.
+echo.
+echo    If you did not press Ctrl+C, read the message above -
+echo    it says why. The panel does not run in the background;
+echo    it lives in this window.
+echo   ==========================================================
 pause
