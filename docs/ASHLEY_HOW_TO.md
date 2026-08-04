@@ -101,8 +101,11 @@ Pictures take one extra step, because they can't ride along in the email.
    LISTING: 124 Pierce photos #PROCEED
    ```
 
-The first picture becomes the big one on the listing. If you want a certain one to be the big one,
-just say so:
+**You don't have to pick a favourite.** The listing shows your pictures one after another, about
+four seconds each, over and over. Send two or send eight — it sorts itself out. Nothing to choose,
+nothing to get wrong.
+
+If you *do* want one to go first, just say so:
 
 ```
 LISTING: 124 Pierce photos, use the kitchen one first #PROCEED
