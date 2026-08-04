@@ -6,3 +6,15 @@ node_modules/
 # Python bytecode from tools/photo_pipeline.py
 __pycache__/
 *.pyc
+
+# Secrets. photo_pipeline.py reads the Supabase key from the environment; if that ever
+# gets written to a file next to it, this repo is PUBLIC and the key would go with it.
+.env
+.env.*
+*.key
+secrets.json
+
+# Iris's audit log is local runtime state, not source. Every panel click appends a line,
+# so committing it means a conflict on every push from a second machine. The log matters
+# on the machine that made the change; it is not something to merge.
+iris/audit.jsonl
