@@ -40,11 +40,53 @@ const MAX_UPLOAD = 40 * 1024 * 1024; // 40 MB per request — phone photos are a
 
 const readJSON = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 
-function run(cmd, args, input) {
+/**
+ * Run a command. Every invocation is bounded in time and can never wait on a human.
+ *
+ * This bit the panel once, so it is worth being explicit. `git push` wants credentials. Under a
+ * console it prompts; under a server with piped stdio there is nobody to prompt, so it blocked
+ * forever. execFileSync has no default timeout, so the single-threaded server froze mid-publish,
+ * the window got closed, and Node died holding .git/index.lock — which then blocked every later
+ * git command until the lock was cleared by hand.
+ *
+ * Two independent guards, because either alone is not enough:
+ *   GIT_TERMINAL_PROMPT=0  git fails fast instead of asking. Turns a hang into an error message.
+ *   timeout                catches everything else — a slow network, a wedged helper, a hook.
+ */
+function run(cmd, args, input, timeout = 20000) {
   return execFileSync(cmd, args, {
     cwd: ROOT, encoding: 'utf8', input, maxBuffer: 16 * 1024 * 1024,
     stdio: ['pipe', 'pipe', 'pipe'],
+    timeout,
+    killSignal: 'SIGKILL',
+    env: {
+      ...process.env,
+      GIT_TERMINAL_PROMPT: '0',
+      GIT_ASKPASS: 'echo',
+      GCM_INTERACTIVE: 'never',
+    },
   });
+}
+
+/**
+ * Clear an abandoned .git/index.lock.
+ *
+ * Only ever removes a ZERO-BYTE lock older than 60s. A lock with content, or a fresh one, belongs
+ * to a live git process and removing it could corrupt the index — so we leave it and report it.
+ */
+function clearStaleGitLock() {
+  const lock = path.join(ROOT, '.git', 'index.lock');
+  try {
+    const st = fs.statSync(lock);
+    if (st.size === 0 && Date.now() - st.mtimeMs > 60000) {
+      fs.unlinkSync(lock);
+      return { cleared: true, ageSec: Math.round((Date.now() - st.mtimeMs) / 1000) };
+    }
+    return { cleared: false, held: true, size: st.size,
+             ageSec: Math.round((Date.now() - st.mtimeMs) / 1000) };
+  } catch {
+    return { cleared: false };            // no lock, nothing to do
+  }
 }
 
 function body(req, limit = 1024 * 1024) {
@@ -162,13 +204,44 @@ function publish(message) {
     return { ok: false, error: 'pages do not match listings.json — rebuild first',
              detail: (e.stdout || e.stderr || '').toString().trim() };
   }
+  const lock = clearStaleGitLock();
+  if (lock.held) {
+    return { ok: false, error: 'another git process is busy in this repo',
+             detail: `.git/index.lock is ${lock.size} bytes, ${lock.ageSec}s old. If GitHub ` +
+                     `Desktop is mid-operation, let it finish and try again.` };
+  }
   try {
     run('git', ['add', ...TRACKED]);
     const msg = message && message.trim() ? message.trim() : 'listings: update via Iris control panel';
     const commit = run('git', ['commit', '-m', msg]).trim();
-    const push = run('git', ['push', 'origin', 'HEAD']).trim();
+
+    // Commit is safe on this machine; push is the part that needs credentials. Report them
+    // separately so a push failure never looks like a lost change — the commit is already made
+    // and one click of Push in GitHub Desktop finishes the job.
+    let push, pushed = true, pushError = null;
+    try {
+      push = run('git', ['push', 'origin', 'HEAD'], undefined, 30000).trim();
+    } catch (e) {
+      pushed = false;
+      const d = (e.stderr || e.stdout || e.message || '').toString();
+      pushError = /could not read Username|Authentication failed|terminal prompts disabled/i.test(d)
+        ? 'Committed locally, but GitHub would not accept the push without credentials. ' +
+          'Open GitHub Desktop and click Push origin — your change is safe in the commit.'
+        : `Committed locally, but the push failed: ${d.trim().split('\n').slice(-2).join(' ')}`;
+      push = '';
+    }
     let sha = '';
     try { sha = run('git', ['rev-parse', '--short', 'HEAD']).trim(); } catch {}
+    if (!pushed) {
+      try {
+        fs.appendFileSync(AUDIT, JSON.stringify({
+          at: new Date().toISOString(), result: 'committed_not_pushed', source: 'control_panel',
+          operator: OPERATOR, commit: sha, message: msg,
+        }) + '\n');
+      } catch {}
+      return { ok: false, committed: true, sha, error: 'published locally, not pushed',
+               detail: pushError };
+    }
     try {
       fs.appendFileSync(AUDIT, JSON.stringify({
         at: new Date().toISOString(), result: 'published', source: 'control_panel',
@@ -673,8 +746,36 @@ server.on('error', (err) => {
   process.exit(1);
 });
 
+/**
+ * Last-resort guards. A single-process control panel should not die because one request threw.
+ *
+ * Before these, any unhandled throw in a handler took the whole server down — the browser then
+ * shows ERR_CONNECTION_REFUSED, which looks like a network problem and is actually a crash. Log it,
+ * keep serving. A panel that stays up and reports one broken action beats a panel that vanishes.
+ */
+process.on('uncaughtException', (err) => {
+  console.error('');
+  console.error(`  !! caught an error that would have stopped the panel: ${err.message}`);
+  console.error(`     ${(err.stack || '').split('\n').slice(1, 3).join('\n     ')}`);
+  console.error('     The panel is still running. Reload the page and try again.');
+  console.error('');
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('');
+  console.error(`  !! a background step failed: ${reason && reason.message ? reason.message : reason}`);
+  console.error('     The panel is still running.');
+  console.error('');
+});
+
 server.listen(PORT, HOST, () => {
   const cfg = readJSON(CONFIG);
+  const lock = clearStaleGitLock();
+  if (lock.cleared) {
+    console.log('');
+    console.log(`  note: cleared an abandoned git lock (${lock.ageSec}s old, empty).`);
+    console.log('        Left behind by an earlier run that was closed mid-publish.');
+  }
   console.log('');
   console.log('  Iris - Website Control');
   console.log('  ---------------------------------------------');
