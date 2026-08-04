@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "source": "static",
-  "last_updated": "2026-08-04T17:43:14Z",
-  "updated_by": "listing-edit set 102-remington",
+  "last_updated": "2026-08-04T18:19:20Z",
+  "updated_by": "listing-edit plan 13074-state-hwy-198 #1",
   "listings": [
     {
       "id": "124-pierce-dr",
@@ -235,7 +235,7 @@
       "state": "TX",
       "status": "available",
       "badge_label": "Available",
-      "units_available": 1,
+      "units_available": 2,
       "all_bills_paid": true,
       "bills_text": "Electricity, water, sewer, trash & internet included.",
       "floor_plans": [
@@ -245,7 +245,7 @@
           "sqft": 950,
           "rent": 1500,
           "status": "available",
-          "available_count": 1
+          "available_count": 2
         },
         {
           "beds": 3,
@@ -264,7 +264,7 @@
           "available_count": 0
         }
       ],
-      "note": "1 unit available now — apply today",
+      "note": "2 units available now — apply today",
       "cta": "apply",
       "waitlist_label": null,
       "virtual_tour": "/tour-demo.html",
