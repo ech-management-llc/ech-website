@@ -99,10 +99,31 @@ function load() {
   return JSON.parse(fs.readFileSync(FILE, 'utf8'));
 }
 
+/**
+ * Write listings.json — but only if the listings actually changed.
+ *
+ * Found by running the email path end to end: "500 Reynolds leased" on a listing that was already
+ * leased still rewrote last_updated/updated_by, so the file came back dirty with no real change.
+ * Publish would then have made a commit whose entire diff was a timestamp.
+ *
+ * That matters more than it looks. Re-sending the same instruction is the most natural thing a
+ * person does when they aren't sure the first one landed — Ashley will do it, and so will you. Every
+ * one of those would have become an empty commit, and an audit trail full of nothing is one nobody
+ * reads. So: compare the listings themselves, ignoring the stamp, and no-op means no write.
+ */
 function save(data, who) {
+  const before = fs.existsSync(FILE) ? fs.readFileSync(FILE, 'utf8') : '';
+  let prevListings = null;
+  try { prevListings = JSON.stringify(JSON.parse(before).listings); } catch {}
+
+  if (prevListings !== null && prevListings === JSON.stringify(data.listings)) {
+    return { written: false };            // nothing substantive changed; leave the file alone
+  }
+
   data.last_updated = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
   data.updated_by = who || 'listing-edit.js';
   fs.writeFileSync(FILE, JSON.stringify(data, null, 2) + '\n', 'utf8');
+  return { written: true };
 }
 
 function find(data, id) {
