@@ -32,6 +32,9 @@ const END = '<!-- LISTINGS:END -->';
 
 const APPLY_URL = 'https://app.rentredi.com/apply';
 
+/** Photos beyond this stay in listings.json but sit out of the rotation — see styles.css cyc2..cyc8. */
+const CYCLE_MAX = 8;
+
 const NOTE_CLASS = {
   available: 'avail-note',
   coming_soon: 'soon-note',
@@ -177,28 +180,39 @@ function renderWell(l, scenes) {
   }
 
   const alt = escAttr(`${l.address}, ${l.city} ${l.state || 'TX'}`);
-  const heroId = `hero-${l.id}`;
-  const hero =
-    `<img class="listing-img" id="${heroId}" src="${escAttr(photos[0])}" alt="${alt}"` +
-    ` loading="lazy" decoding="async">`;
 
-  let out = `<div class="photo-ph has-photo">${hero}${badge}</div>`;
-
-  if (photos.length > 1) {
-    const thumbs = photos
-      .map((p, i) => {
-        const sel = i === 0 ? ' aria-current="true"' : '';
-        return (
-          `<button type="button" class="thumb" data-src="${escAttr(p)}"${sel}` +
-          ` onclick="swapHero('${heroId}',this)" aria-label="Photo ${i + 1} of ${photos.length}">` +
-          `<img src="${escAttr(p)}" alt="" loading="lazy" decoding="async"></button>`
-        );
-      })
-      .join('');
-    out += `<div class="thumbs">${thumbs}</div>`;
+  // ONE photo: nothing to cycle.
+  if (photos.length === 1) {
+    return (
+      `<div class="photo-ph has-photo">` +
+      `<img class="listing-img" src="${escAttr(photos[0])}" alt="${alt}" loading="lazy" decoding="async">` +
+      `${badge}</div>`
+    );
   }
 
-  return out;
+  // MANY photos: they rotate on their own, so nobody has to nominate a "profile picture".
+  // Capped at CYCLE_MAX because the CSS keyframes are enumerated (cyc2..cyc8) — beyond that the
+  // rotation is too slow to be seen anyway. Extras stay in listings.json, just not in the cycle.
+  const shown = photos.slice(0, CYCLE_MAX);
+  const n = shown.length;
+
+  const imgs = shown
+    .map((p, i) => {
+      // Only the first photo carries alt text. The rest are the same property from another angle —
+      // announcing all of them to a screen reader is noise, not information.
+      const a = i === 0 ? ` alt="${alt}"` : ' alt="" aria-hidden="true"';
+      // First photo eager: it's the visible one on load, so lazy-loading it would flash empty.
+      const load = i === 0 ? '' : ' loading="lazy"';
+      return `<img src="${escAttr(p)}" style="--i:${i}"${a}${load} decoding="async">`;
+    })
+    .join('');
+
+  const count = n > 1 ? `<span class="photo-count">${n} photos</span>` : '';
+
+  return (
+    `<div class="photo-ph has-photo photo-cycle" data-n="${n}" style="--n:${n}">` +
+    `${imgs}${badge}${count}</div>`
+  );
 }
 
 function renderCta(l, mf) {
