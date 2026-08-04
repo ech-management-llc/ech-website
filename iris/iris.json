@@ -1,0 +1,59 @@
+{
+  "$comment": "Iris runtime config — Website Control. See iris/IRIS_CONTRACT.md before editing.",
+  "employee": "iris",
+  "role": "Marketing & IT — listings, photos, the public site",
+  "reports_to": "tars (Chief of Staff)",
+  "mode": "standalone",
+  "$mode_values": {
+    "standalone": "Iris takes orders from her own command sources (email, control panel). Website Control runs as its own app. This is the current state while Foundation Layer is being built.",
+    "managed": "Iris takes orders ONLY from the Chief of Staff. Every local command source is stood down. Foundation Layer owns intent; Iris owns execution."
+  },
+  "command_sources": {
+    "email": {
+      "enabled": true,
+      "$note": "ONLY honoured in standalone mode. Ignored entirely when mode=managed.",
+      "mailbox": "auto",
+      "$mailbox_note": "'auto' = whatever mailbox the Gmail connector is authenticated as. Target is manager@echmanagement.services — the business inbox. Never hardcode an address here; resolve at runtime and report which was used.",
+      "subject_prefix": "LISTING:",
+      "auth_tag": "#PROCEED",
+      "operators": [
+        "jerry.eads@echmanagement.services",
+        "manager@echmanagement.services",
+        "ashley.eads@echmanagement.services"
+      ]
+    },
+    "control_panel": {
+      "enabled": false,
+      "$note": "Reserved. A direct UI for Website Control as a standalone app — same instruction envelope, no email round-trip."
+    },
+    "chief_of_staff": {
+      "enabled": false,
+      "$note": "Set enabled=true and mode=managed together when Foundation Layer plugs in. Iris then accepts only signed envelopes from TARS.",
+      "endpoint": null,
+      "auth": null
+    }
+  },
+  "capabilities": {
+    "listing_status": true,
+    "listing_price": true,
+    "listing_copy": true,
+    "listing_photos": true,
+    "listing_reorder": true,
+    "listing_create": "confirm_required",
+    "listing_remove": "confirm_required"
+  },
+  "autonomy": {
+    "level": "L1_auto_publish_reversible",
+    "$note": "Standalone: reversible changes (status/price/copy/photos/reorder) publish immediately, each as its own commit. Create/remove wait for human confirmation. When mode=managed this MUST drop to propose-only to match Foundation Layer's L1 gate — FL has no auto-commit branch anywhere and Iris must not be the exception.",
+    "managed_level": "L1_propose_only"
+  },
+  "publish_target": {
+    "repo": "ech-management-llc/ech-website",
+    "branch": "main",
+    "host": "GitHub Pages",
+    "domain": "echmanagement.services",
+    "photo_store": "supabase://listing-photos (public bucket)",
+    "$sole_writer": "Iris is the ONLY writer to the listing region of this repo. Anything else touching the LISTINGS:START/END markers is a conflict — see IRIS_CONTRACT.md §5."
+  },
+  "last_reviewed": "2026-08-03"
+}
