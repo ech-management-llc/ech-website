@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "source": "static",
-  "last_updated": "2026-07-29T17:51:50Z",
-  "updated_by": "listing-edit photos 102-remington",
+  "last_updated": "2026-08-04T17:43:14Z",
+  "updated_by": "listing-edit set 102-remington",
   "listings": [
     {
       "id": "124-pierce-dr",
@@ -35,17 +35,17 @@
       "address": "102 Remington",
       "city": "Mabank",
       "state": "TX",
-      "status": "coming_soon",
-      "badge_label": "Coming Soon",
+      "status": "available",
+      "badge_label": "Available",
       "beds": 4,
       "baths": 2,
       "sqft": 1450,
       "rent": 1900,
-      "note": "Available ~1 month — no application fee to join the waitlist",
-      "cta": "waitlist",
+      "note": "Available now — apply today",
+      "cta": "apply",
       "waitlist_label": "102 Remington, Mabank",
       "virtual_tour": "/tour-demo.html",
-      "scene": "home-under-construction-with-a-builder-on-a-ladder",
+      "scene": "available-home-with-a-now-leasing-sign-and-balloon",
       "photos": []
     },
     {
