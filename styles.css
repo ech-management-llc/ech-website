@@ -143,3 +143,48 @@ footer a:hover { color: var(--lavender); }
 .thumbs .thumb[aria-current="true"]{border-color:#1a7f4b;}
 .thumbs .thumb:focus-visible{outline:2px solid #1a7f4b;outline-offset:1px;}
 @media (max-width:600px){.thumbs .thumb{width:50px;height:38px;}}
+
+/* ---- Auto-cycling listing photos ------------------------------------------------
+   No hero photo to choose. Drop any number of photos in and they rotate.
+
+   How it works, so future-you isn't puzzled: the FIRST photo is a static base layer
+   at full opacity. Photos 2..n stack on top and each fade in for one slot of the
+   cycle, then out. Because the base never disappears, the wrap-around never flashes
+   empty — which is what happens if you animate every layer.
+
+   Pure CSS on purpose. This site has no build step and no framework; a slideshow
+   that needs JavaScript is a slideshow that breaks when JavaScript doesn't run. */
+.photo-cycle img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+.photo-cycle img:first-child{opacity:1;}
+.photo-cycle img:not(:first-child){
+  opacity:0;
+  animation-duration:calc(var(--n) * 4s);
+  animation-delay:calc(var(--i) * 4s);
+  animation-iteration-count:infinite;
+  animation-timing-function:ease-in-out;
+  animation-fill-mode:both;
+}
+.photo-cycle[data-n="2"] img:not(:first-child){animation-name:cyc2;}
+.photo-cycle[data-n="3"] img:not(:first-child){animation-name:cyc3;}
+.photo-cycle[data-n="4"] img:not(:first-child){animation-name:cyc4;}
+.photo-cycle[data-n="5"] img:not(:first-child){animation-name:cyc5;}
+.photo-cycle[data-n="6"] img:not(:first-child){animation-name:cyc6;}
+.photo-cycle[data-n="7"] img:not(:first-child){animation-name:cyc7;}
+.photo-cycle[data-n="8"] img:not(:first-child){animation-name:cyc8;}
+
+@keyframes cyc2{0%,100%{opacity:0}2%{opacity:1}46%{opacity:1}50%{opacity:0}}
+@keyframes cyc3{0%,100%{opacity:0}2%{opacity:1}30%{opacity:1}33%{opacity:0}}
+@keyframes cyc4{0%,100%{opacity:0}1.5%{opacity:1}22%{opacity:1}25%{opacity:0}}
+@keyframes cyc5{0%,100%{opacity:0}1.5%{opacity:1}17%{opacity:1}20%{opacity:0}}
+@keyframes cyc6{0%,100%{opacity:0}1%{opacity:1}14%{opacity:1}16.6%{opacity:0}}
+@keyframes cyc7{0%,100%{opacity:0}1%{opacity:1}11.8%{opacity:1}14.2%{opacity:0}}
+@keyframes cyc8{0%,100%{opacity:0}1%{opacity:1}10%{opacity:1}12.5%{opacity:0}}
+
+/* Someone who asked their device for less motion gets the first photo, held still. */
+@media (prefers-reduced-motion: reduce){
+  .photo-cycle img:not(:first-child){animation:none;opacity:0;}
+}
+
+/* A quiet count so a visitor knows there's more than one shot. */
+.photo-count{position:absolute;bottom:8px;right:8px;z-index:3;background:rgba(0,0,0,.62);
+  color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.04em;padding:3px 7px;border-radius:999px;}
