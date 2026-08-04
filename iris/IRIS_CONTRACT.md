@@ -169,9 +169,20 @@ Everything outside the markers — page copy, nav, FAQs, styles — is a human's
 `command_sources.email.mailbox` is `"auto"` deliberately. Iris reads whatever the Gmail connector is
 authenticated as and **reports which mailbox she used**.
 
-Target is `manager@echmanagement.services` — the business inbox, where website enquiries, tenant
-mail, and vendor mail all land. `jerry.eads@` and `ashley.eads@` are *sending* accounts; they mail
-**into** manager@.
+**Today, standalone, the command inbox is `jerry.eads@echmanagement.services`** — because that is
+what the Gmail connector on this machine is authenticated as, and that connector is deliberately not
+being changed. Ashley sends *to* jerry.eads@. `docs/ASHLEY_HOW_TO.md` says so, and the two must
+never disagree.
+
+`manager@echmanagement.services` is the **business** inbox — website enquiries, tenant mail, vendor
+mail. It is the intended command inbox **under Foundation Layer**, which reaches it through its own
+per-tenant OAuth row rather than this machine's connector. It is not the command inbox today.
+
+> **Why this is written down so bluntly.** These two got out of step once. If a doc tells Ashley to
+> mail manager@ while Iris is reading jerry.eads@, her email is never seen — and she gets no reply,
+> because §6 says Iris stays silent to unrecognised senders. A command that vanishes without a
+> bounce is the worst failure this system has. Whenever the connector identity changes, change
+> ASHLEY_HOW_TO.md in the same commit.
 
 Hardcoding an address would break the standalone product the moment a second customer used it — and
 would silently read the wrong inbox if a connector were ever reconnected. Resolve, report, never
