@@ -213,7 +213,31 @@ function publish(message) {
   try {
     run('git', ['add', ...TRACKED]);
     const msg = message && message.trim() ? message.trim() : 'listings: update via Iris control panel';
-    const commit = run('git', ['commit', '-m', msg]).trim();
+
+    /**
+     * Commit only if there is something to commit — then push regardless.
+     *
+     * This was broken and it hid six commits for twelve days. publish() always ran `git commit`
+     * first. With a clean working tree that throws "nothing to commit", the whole function fell
+     * into the catch, and `git push` was never reached. Meanwhile the status bar read
+     * "6 change(s) not published" and the button was enabled, because it counts commits-ahead as
+     * unpublished work. So the panel truthfully reported unpublished commits and then could not
+     * publish them, every single time, with an error that looked like something else entirely.
+     *
+     * Committing and pushing are two different jobs. Treat them that way: commit if the tree is
+     * dirty, push if we are ahead, and say plainly which of those actually happened.
+     */
+    const dirty = run('git', ['status', '--porcelain', ...TRACKED]).trim();
+    let commit = 'nothing new to commit — pushing existing commits';
+    if (dirty) commit = run('git', ['commit', '-m', msg]).trim();
+
+    let ahead = 0;
+    try { ahead = Number(run('git', ['rev-list', '--count', 'origin/main..HEAD']).trim()) || 0; } catch {}
+    if (!dirty && ahead === 0) {
+      return { ok: false, error: 'nothing to publish',
+               detail: 'No listing changes and nothing waiting to push. If you edited a card, ' +
+                       'press its Save button first — Publish only sends changes that were saved.' };
+    }
 
     // Commit is safe on this machine; push is the part that needs credentials. Report them
     // separately so a push failure never looks like a lost change — the commit is already made
@@ -362,6 +386,8 @@ h1{margin:0;font-size:17px;font-weight:700}h1 span{color:#7d8896;font-weight:500
 .bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:12px;color:#8b95a3}
 .pill{background:#232b36;border:1px solid #313b48;border-radius:999px;padding:3px 10px}
 .pill.warn{background:#3a2a12;border-color:#6b4a17;color:#f0c674}
+/* An unsaved card should be impossible to miss. Amber, and the button renames itself to "Save *". */
+.needsave{background:#6b4a17!important;border-color:#f0c674!important;color:#ffe9b8!important;font-weight:700}
 .pill.ok{background:#14301f;border-color:#1f5133;color:#6bd396}
 main{padding:16px 20px 240px;max-width:1180px;margin:0 auto}
 .tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
@@ -411,6 +437,7 @@ dialog h3{margin:0 0 12px;font-size:15px}
 <header>
   <h1>Iris <span>- Website Control</span></h1>
   <div class="bar" id="bar"><span class="dim">loading...</span></div>
+  <div class="bar" id="unsaved"></div>
 </header>
 <main>
   <div id="roll"></div>
@@ -534,7 +561,54 @@ function render(){
   wire();
 }
 
+/**
+ * Which cards have typed-but-unsaved edits.
+ *
+ * Editing a field does nothing on its own — the card's Save button is what applies it. That cost
+ * three real changes: they were typed, Publish was pressed, and nothing happened, because Publish
+ * only sends what was already saved. Nothing was logged either, since no action ever ran. Silent,
+ * and indistinguishable from the tool being broken.
+ *
+ * So: know at all times which cards are holding unsaved text, show it, and never let Publish run
+ * while edits are still sitting in a box.
+ */
+function unsavedCards(){
+  const out=[];
+  for(const l of listings){
+    const st=document.querySelector('.st[data-id="'+l.id+'"]');
+    const re=document.querySelector('.rent[data-id="'+l.id+'"]');
+    const nt=document.querySelector('.note[data-id="'+l.id+'"]');
+    if(!st) continue;
+    const changed =
+      (st.value!==l.status) ||
+      (re && re.value!=='' && Number(re.value)!==l.rent) ||
+      (nt && nt.value!==(l.note||''));
+    if(changed) out.push(l.id);
+  }
+  return out;
+}
+
+/** Paint the unsaved state so it is visible before you go looking for it. */
+function markUnsaved(){
+  const set=new Set(unsavedCards());
+  document.querySelectorAll('.save').forEach(b=>{
+    const on=set.has(b.dataset.id);
+    b.classList.toggle('needsave',on);
+    b.textContent = on ? 'Save *' : 'Save';
+  });
+  const n=set.size;
+  const w=$('#unsaved');
+  if(w) w.innerHTML = n
+    ? '<span class="pill warn">'+n+' card'+(n>1?'s':'')+' with unsaved edits - press Save on '+
+      (n>1?'each':'it')+' before publishing</span>'
+    : '';
+}
+
 function wire(){
+  // Any keystroke or dropdown change repaints the unsaved markers.
+  document.querySelectorAll('.st,.rent,.note').forEach(el=>{
+    el.oninput=markUnsaved; el.onchange=markUnsaved;
+  });
   document.querySelectorAll('.save').forEach(b=>b.onclick=async()=>{
     const id=b.dataset.id, l=listings.find(x=>x.id===id);
     const st=document.querySelector('.st[data-id="'+id+'"]').value;
@@ -571,6 +645,7 @@ function wire(){
     const input=d.querySelector('input');
     d.onclick=()=>input.click();
     input.onchange=()=>{ if(input.files.length) upload(d.dataset.id,input.files); };
+    markUnsaved();
     d.ondragover=e=>{e.preventDefault();d.classList.add('over');};
     d.ondragleave=()=>d.classList.remove('over');
     d.ondrop=e=>{e.preventDefault();d.classList.remove('over');
@@ -630,6 +705,17 @@ async function load(){
 $('#reviewBtn').onclick=()=>{ $('#reviewBody').textContent=review.lines.join('\n')||'(nothing)'; reviewDlg.showModal(); };
 $('#reviewGo').onclick=()=>{ reviewDlg.close(); $('#pubBtn').click(); };
 $('#pubBtn').onclick=async()=>{
+  // Refuse to publish over the top of unsaved edits. Losing typed work silently is the worst
+  // thing this panel can do, and it already did it once.
+  const un=unsavedCards();
+  if(un.length){
+    log('NOT PUBLISHED - '+un.length+' card(s) still have unsaved edits: '+un.join(', ')+
+        '. Press Save on each one first, then Publish.','bad');
+    alert('These cards have edits you have not saved yet:\n\n  '+un.join('\n  ')+
+          '\n\nPress the Save button on each card, then click Publish.\n\n'+
+          'Typing in a box does not change anything on its own - Save is what applies it.');
+    return;
+  }
   $('#pubBtn').disabled=true; log('publishing...','dim');
   const r=await api('/api/publish',{message:$('#pubMsg').value});
   if(r.ok){ log('PUBLISHED '+(r.sha||'')+' - live in about a minute','ok'); $('#pubMsg').value=''; }
