@@ -627,6 +627,35 @@ function markUnsaved(){
     : '';
 }
 
+/**
+ * Auto-publish, debounced.
+ *
+ * iris.json says autonomy is L1_auto_publish_reversible: "reversible changes publish immediately,
+ * each as its own commit." The panel never honoured that — Save wrote the file locally and then
+ * waited for a second button. Twice now that gap read as "the tool is broken": edits sat local
+ * while the site stayed stale, and the person doing the editing had no reason to know why.
+ *
+ * So Save now publishes. The debounce (2.5s) exists because reorder clicks come in bursts — the
+ * activity log shows eight in forty seconds from one session — and each publish is a commit, a
+ * push, and a Pages rebuild. Batching a burst into one publish keeps the history readable without
+ * making anyone wait. The Publish button stays as a manual fallback for when a push fails.
+ */
+let apTimer=null, apReasons=[];
+function autoPublish(reason){
+  apReasons.push(reason);
+  clearTimeout(apTimer);
+  apTimer=setTimeout(async()=>{
+    const msg=('listings: '+apReasons.join('; ')).slice(0,180);
+    apReasons=[];
+    log('publishing to live site...','dim');
+    const r=await api('/api/publish',{message:msg});
+    if(r.ok) log('LIVE '+(r.sha||'')+' - on the website in about a minute (hard-refresh: Ctrl+Shift+R)','ok');
+    else if(r.committed) log('saved and committed, but the push needs GitHub Desktop: '+(r.detail||r.error),'bad');
+    else log('AUTO-PUBLISH FAILED - '+(r.error||'')+' '+(r.detail||''),'bad');
+    await load();
+  },2500);
+}
+
 function wire(){
   // Any keystroke or dropdown change repaints the unsaved markers.
   document.querySelectorAll('.st,.rent,.note').forEach(el=>{
@@ -638,10 +667,22 @@ function wire(){
     const re=document.querySelector('.rent[data-id="'+id+'"]');
     const nt=document.querySelector('.note[data-id="'+id+'"]').value;
     b.disabled=true;
-    if(st!==l.status) await act('set_status',id,{status:st});
-    if(re&&re.value!==''&&Number(re.value)!==l.rent) await act('set_price',id,{rent:Number(re.value)});
-    if(nt!==(l.note||'')) await act('set_copy',id,{note:nt});
-    b.disabled=false; await load();
+    /**
+     * Track what actually changed, and never finish silently.
+     *
+     * The old handler compared each field and quietly did nothing when they all matched. Real
+     * sequence that burned a morning: every intended change was already saved and published, the
+     * person pressed Save again to "push more changes", nothing appeared in the activity log, and
+     * the tool looked dead. A no-op must say it is a no-op.
+     */
+    const did=[];
+    if(st!==l.status){ if(await act('set_status',id,{status:st})) did.push('status '+st); }
+    if(re&&re.value!==''&&Number(re.value)!==l.rent){ if(await act('set_price',id,{rent:Number(re.value)})) did.push('rent '+re.value); }
+    if(nt!==(l.note||'')){ if(await act('set_copy',id,{note:nt})) did.push('note'); }
+    b.disabled=false;
+    if(did.length) autoPublish(id+' ('+did.join(', ')+')');
+    else log('nothing to save on '+id+' - the fields already match what is saved and live','dim');
+    await load();
   });
   document.querySelectorAll('.psave').forEach(b=>b.onclick=async()=>{
     const id=b.dataset.id, pi=Number(b.dataset.plan);
@@ -653,16 +694,19 @@ function wire(){
     if(st!==p.status) ch.status=st;
     if(rt!==''&&Number(rt)!==p.rent) ch.rent=Number(rt);
     if(ct!==''&&Number(ct)!==(p.available_count??0)) ch.count=Number(ct);
-    if(!Object.keys(ch).length){ log('no change on '+id+' plan '+pi,'dim'); return; }
-    b.disabled=true; await act('set_plan',id,ch,{plan_index:pi}); b.disabled=false; await load();
+    if(!Object.keys(ch).length){ log('nothing to save on '+id+' plan '+pi+' - fields already match','dim'); return; }
+    b.disabled=true;
+    if(await act('set_plan',id,ch,{plan_index:pi})) autoPublish(id+' plan '+pi);
+    b.disabled=false; await load();
   });
   document.querySelectorAll('.up').forEach(b=>b.onclick=async()=>{
     const l=listings.find(x=>x.id===b.dataset.id);
-    if(l.order>1){ await act('reorder',l.id,{position:l.order-1}); await load(); }
+    if(l.order>1){ if(await act('reorder',l.id,{position:l.order-1})) autoPublish('reorder '+l.id); await load(); }
   });
   document.querySelectorAll('.clr').forEach(b=>b.onclick=async()=>{
     if(!confirm('Remove all photos from this listing? It goes back to placeholder art.'))return;
-    await act('remove_photos',b.dataset.id,{clear:true}); await load();
+    if(await act('remove_photos',b.dataset.id,{clear:true})) autoPublish(b.dataset.id+' photos cleared');
+    await load();
   });
   document.querySelectorAll('.drop').forEach(d=>{
     const input=d.querySelector('input');
@@ -683,6 +727,7 @@ async function upload(id,files){
   const r=await fetch('/api/photos?listing='+encodeURIComponent(id),{method:'POST',body:fd}).then(r=>r.json());
   if(!r.ok){ log('UPLOAD FAILED  '+r.error+'  '+(r.detail||''),'bad'); return; }
   log('ok  '+r.urls.length+' photo(s) added to '+id,'ok');
+  autoPublish(id+' +'+r.urls.length+' photo(s)');
   await load();
 }
 
