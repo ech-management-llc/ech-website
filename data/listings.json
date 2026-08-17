@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "source": "static",
-  "last_updated": "2026-08-17T00:40:19Z",
-  "updated_by": "listing-edit reorder 124-pierce-dr",
+  "last_updated": "2026-08-17T19:55:37Z",
+  "updated_by": "listing-edit plan 13074-state-hwy-198 #1",
   "listings": [
     {
       "id": "124-pierce-dr",
@@ -235,7 +235,7 @@
       "state": "TX",
       "status": "leased",
       "badge_label": "Leased",
-      "units_available": 2,
+      "units_available": 0,
       "all_bills_paid": true,
       "bills_text": "Electricity, water, sewer, trash & internet included.",
       "floor_plans": [
@@ -244,8 +244,8 @@
           "baths": 1,
           "sqft": 950,
           "rent": 1500,
-          "status": "available",
-          "available_count": 2
+          "status": "leased",
+          "available_count": 0
         },
         {
           "beds": 3,

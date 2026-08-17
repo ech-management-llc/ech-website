@@ -23,8 +23,8 @@
       ]
     },
     "control_panel": {
-      "enabled": false,
-      "$note": "Reserved. A direct UI for Website Control as a standalone app — same instruction envelope, no email round-trip."
+      "enabled": true,
+      "$note": "The local dashboard (tools/iris-panel.js, 127.0.0.1 only). Same instruction envelope as email, no round-trip. Enabled in the COMMITTED config on purpose: it used to be false here and flipped on/off around every panel action, which meant any git checkout/rebase silently disabled the panel until the next flip — a failure with no error message anywhere. In standalone mode both email and control_panel are live; mode=managed stands them both down regardless of these flags."
     },
     "chief_of_staff": {
       "enabled": false,

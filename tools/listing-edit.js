@@ -254,6 +254,43 @@ function cmdSet(data, id, flags) {
 
   if (flags.status) {
     if (!STATUSES.includes(flags.status)) die(`--status must be one of: ${STATUSES.join(', ')}`);
+
+    /**
+     * Multifamily: the building status FOLLOWS the plans — one direction, no exceptions.
+     *
+     * cmdPlan has enforced that since day one ("the badge can never contradict the unit list"),
+     * but this path didn't: setting the building leased left the plans untouched, producing a
+     * card that said "Fully leased" while a plan row still advertised 2 open units. That exact
+     * contradiction shipped to the live site, and the panel's building dropdown appeared to
+     * "revert" because the display follows the plans. So:
+     *
+     *   leased    → every plan goes leased, count 0. Unambiguous, cascade it.
+     *   available → WHICH unit? A building isn't available, a floor plan is — and the site
+     *               needs a unit and a price to advertise. Refuse with the exact command.
+     */
+    if (l.kind === 'multifamily' && Array.isArray(l.floor_plans) && l.floor_plans.length) {
+      if (flags.status === 'leased') {
+        l.floor_plans.forEach((p, i) => {
+          if (p.status !== 'leased' || (p.available_count || 0) !== 0) {
+            changes.push(`plan #${i + 1} ${p.status}(${p.available_count || 0}) → leased(0)`);
+            p.status = 'leased'; p.available_count = 0;
+          }
+        });
+        l.units_available = 0;
+      } else if (flags.status === 'available') {
+        const open = l.floor_plans.some((p) => p.status === 'available');
+        if (!open) {
+          die(
+            `${id} is a multifamily building — say which floor plan is available, so the site ` +
+            `knows the unit and price to advertise:\n` +
+            l.floor_plans.map((p, i) =>
+              `  node tools/listing-edit.js plan ${id} ${i + 1} --count 1   ` +
+              `(${p.beds}bd/${p.baths}ba $${p.rent})`).join('\n') +
+            `\n(or use the plan row's own save button in the control panel)`
+          );
+        }
+      }
+    }
     changes.push(...applyStatus(l, flags.status, flags));
   }
   for (const [k, set] of Object.entries(FIELD_SETTERS)) {

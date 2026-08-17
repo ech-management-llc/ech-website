@@ -102,7 +102,16 @@ function body(req, limit = 1024 * 1024) {
   });
 }
 
-/** Temporarily allow the control_panel source, run the envelope, restore config. */
+/**
+ * Run the envelope through the executor. No config gymnastics.
+ *
+ * This used to flip control_panel.enabled to true, execute, and flip it back off in a finally —
+ * two writes to iris.json around every single click. The committed config said false, so any
+ * git checkout or rebase silently re-disabled the panel until the next flip, and anything that
+ * called iris-execute outside that window was refused with "control_panel may not command Iris".
+ * A config file the software rewrites twice per action is not configuration, it is contention.
+ * control_panel is now enabled in the committed config, where the mode gate still outranks it.
+ */
 function executeEnvelope(env) {
   const cfg = readJSON(CONFIG);
   if ((cfg.mode || '').toLowerCase() === 'managed') {
@@ -111,11 +120,12 @@ function executeEnvelope(env) {
       'stood down by design. Set mode="standalone" in iris/iris.json to use the panel again.',
     ], applied: [], notes: [] };
   }
-
-  const wasEnabled = cfg.command_sources.control_panel.enabled;
-  if (!wasEnabled) {
-    cfg.command_sources.control_panel.enabled = true;
-    fs.writeFileSync(CONFIG, JSON.stringify(cfg, null, 2) + '\n');
+  if (!cfg.command_sources?.control_panel?.enabled) {
+    return { refused: [
+      'control_panel is disabled in iris/iris.json — set command_sources.control_panel.enabled ' +
+      'to true. (It should be true in the committed file; if it went false again, something ' +
+      'reverted the config.)',
+    ], applied: [], notes: [] };
   }
   try {
     return JSON.parse(run('node', [path.join('tools', 'iris-execute.js'), '--envelope', '-'],
@@ -124,12 +134,6 @@ function executeEnvelope(env) {
     const text = (e.stdout || '').toString();
     try { return JSON.parse(text); } catch {
       return { refused: [(e.stderr || e.message).toString().trim()], applied: [], notes: [] };
-    }
-  } finally {
-    if (!wasEnabled) {
-      const c = readJSON(CONFIG);
-      c.command_sources.control_panel.enabled = false;
-      fs.writeFileSync(CONFIG, JSON.stringify(c, null, 2) + '\n');
     }
   }
 }
@@ -640,6 +644,21 @@ function markUnsaved(){
  * push, and a Pages rebuild. Batching a burst into one publish keeps the history readable without
  * making anyone wait. The Publish button stays as a manual fallback for when a push fails.
  */
+/**
+ * A silent client error is the enemy. Twice now a dead click has cost a debugging session
+ * because a thrown exception in a handler produced nothing: no activity line, no audit entry,
+ * no visible anything. Every uncaught error and rejected promise now prints into the Activity
+ * log where the person clicking can see it, with the reminder that a screenshot of it is the fix.
+ */
+window.onerror=(msg,src,line)=>{
+  log('CLIENT ERROR  '+msg+'  (line '+line+') - the click that caused this did NOT apply. '+
+      'Screenshot this line.','bad');
+};
+window.onunhandledrejection=(e)=>{
+  log('CLIENT ERROR  '+((e.reason&&e.reason.message)||e.reason)+' - the click that caused this '+
+      'did NOT apply. Screenshot this line.','bad');
+};
+
 let apTimer=null, apReasons=[];
 function autoPublish(reason){
   apReasons.push(reason);
