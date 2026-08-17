@@ -158,9 +158,18 @@ function gitState() {
   try {
     const branch = run('git', ['rev-parse', '--abbrev-ref', 'HEAD']).trim();
     const dirty = run('git', ['status', '--porcelain', ...TRACKED]).trim();
-    let ahead = 0;
+    let ahead = 0, behind = 0;
     try { ahead = Number(run('git', ['rev-list', '--count', 'origin/main..HEAD']).trim()) || 0; } catch {}
-    return { branch, dirtyFiles: dirty.split('\n').filter(Boolean).length, ahead };
+
+    /**
+     * Count what origin has that we don't. Without this the panel is blind to divergence: it
+     * reported "8 change(s) not published" for days while every push was being rejected, because
+     * it only ever measured commits AHEAD. Behind > 0 means push WILL fail until it is merged,
+     * and the panel should say so before you press the button, not after.
+     */
+    try { behind = Number(run('git', ['rev-list', '--count', 'HEAD..origin/main']).trim()) || 0; } catch {}
+
+    return { branch, dirtyFiles: dirty.split('\n').filter(Boolean).length, ahead, behind };
   } catch (e) { return { error: e.message }; }
 }
 
@@ -248,9 +257,23 @@ function publish(message) {
     } catch (e) {
       pushed = false;
       const d = (e.stderr || e.stdout || e.message || '').toString();
+      /**
+       * Translate git's own hints into something actionable.
+       *
+       * The fast-forward case is the one that actually bit us. GitHub rejected the push because
+       * the branch had diverged - someone had committed to origin directly - and git's advice is
+       * "use 'git pull' before pushing again", which tells you the mechanic and not the meaning.
+       * Meanwhile the panel's own status bar only counted commits AHEAD, so it cheerfully reported
+       * "8 change(s) not published" while being unable to publish any of them. Say the real thing:
+       * the website has changes yours don't, and they have to be merged first.
+       */
       pushError = /could not read Username|Authentication failed|terminal prompts disabled/i.test(d)
         ? 'Committed locally, but GitHub would not accept the push without credentials. ' +
           'Open GitHub Desktop and click Push origin — your change is safe in the commit.'
+        : /fast-forward|rejected|non-fast|before pushing again/i.test(d)
+        ? 'Committed locally, but GitHub rejected it: the site repo has commits your copy does ' +
+          'not have, so the two have diverged. Nothing is lost. In GitHub Desktop click Pull ' +
+          'origin, then Push origin. If it reports conflicts, stop and ask before resolving them.'
         : `Committed locally, but the push failed: ${d.trim().split('\n').slice(-2).join(' ')}`;
       push = '';
     }
@@ -680,7 +703,10 @@ async function load(){
     '<span class="pill">'+d.no_photo_count+' missing photos</span>'+
     '<span class="pill">branch: '+(g.branch||'?')+'</span>'+
     (unpub?'<span class="pill warn">'+(pending||unpub)+' change(s) not published</span>'
-          :'<span class="pill ok">in sync with live site</span>');
+          :'<span class="pill ok">in sync with live site</span>')+
+    // Divergence is the one state where the Publish button cannot possibly work. Say it up front.
+    ((g.behind||0)?'<span class="pill warn">behind by '+g.behind+' - Pull in GitHub Desktop '+
+                   'before publishing, or the push will be rejected</span>':'');
   const S=d.summary||{};
   $('#roll').innerHTML=
     '<div class="k good"><b>'+(S.doors_vacant??'?')+'</b>doors open</div>'+
