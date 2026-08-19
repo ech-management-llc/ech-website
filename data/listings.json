@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "source": "static",
-  "last_updated": "2026-08-17T19:55:37Z",
-  "updated_by": "listing-edit plan 13074-state-hwy-198 #1",
+  "last_updated": "2026-08-19T01:39:29Z",
+  "updated_by": "listing-edit set 1301-e-royall-blvd",
   "listings": [
     {
       "id": "124-pierce-dr",
@@ -101,17 +101,17 @@
       "address": "1301 E. Royall Blvd",
       "city": "Malakoff",
       "state": "TX",
-      "status": "leased",
-      "badge_label": "Rented",
+      "status": "available",
+      "badge_label": "Available",
       "beds": 3,
       "baths": 2,
       "sqft": 1406,
       "rent": 1500,
-      "note": "Currently leased",
-      "cta": "none",
+      "note": "Available now — apply today",
+      "cta": "apply",
       "waitlist_label": null,
       "virtual_tour": null,
-      "scene": "leased-home-with-a-backyard-barbecue-and-a-dog",
+      "scene": "available-home-with-a-now-leasing-sign-and-balloon",
       "photos": []
     },
     {
